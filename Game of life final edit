@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+    #GOLcanvas {
+        width:700px;
+        height: 700px;
+        background-color: gray;
+
+    }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <canvas id = 'GOLcanvas'></canvas>
+    <script>
+        'use strict'
+        const GOLcanvas = document.getElementById('GOLcanvas');
+        const GOLcontext = GOLcanvas.getContext('2d');
+
+      GOLcanvas.addEventListener('click', begin());
+
+function begin(){
+       setInterval(go, 1)
+}
+
+function go(){
+    checkGrid();
+    drawGrid();
+}
+
+        //make a grid 
+
+        let grid = [];
+        let newGrid = grid;
+        let rows = 120;
+
+        for(let i = 0; i < rows; i++){
+            let _TEMP = [];
+            for(let j = 0; j < rows; j++){
+                _TEMP.push({
+                    x: i * (GOLcanvas.width/rows),
+                    y: j * (GOLcanvas.height/rows),
+                    status: Math.random()>=.7
+                })
+            }
+            grid.push(_TEMP);
+        }
+
+       
+        drawGrid();
+
+        function drawGrid(){
+            for(let i = 0; i < grid.length; i++){
+                for(let j = 0; j < grid[i].length; j++){
+
+                    GOLcontext.beginPath();
+                    if(grid[i][j].status){
+                        GOLcontext.fillStyle ='white'
+                    } else {
+                        GOLcontext.fillStyle = 'black'
+                    }
+                    GOLcontext.rect(grid[i][j].x, grid[i][j].y, GOLcanvas.width/rows, GOLcanvas.height/rows)
+                    GOLcontext.fill();
+                   //GOLcontext.stroke();
+                }
+            }
+
+        }
+        
+        
+        function checkGrid() {
+            for(let i =0 ; i < grid.length; i++){
+                for(let j = 0 ; j < grid[i].length; j++){
+                    newGrid[i][j] = {
+                        x: grid[i][j].x, 
+                        y: grid[i][j].y, //here
+                        status: getStatus(i,j)
+                    }
+                    
+                }
+            }
+            grid = newGrid
+           
+        }
+        
+       
+        
+
+        function getStatus(x,y){
+            var counter = 0
+            for(let i =-1; i <2; i++){
+                for(let j = -1; j < 2; j++){
+                    let row = (y + j + rows)%rows;
+                    let col = (x + i + rows) % rows;
+                    if(grid[row][col].status){
+                        counter++
+                    }
+                }
+            }
+
+            if(grid[y][x].status== true){
+                counter --
+               return counter ==2|| counter ==3
+            }
+            else if (grid[y][x].status == false){
+               return counter ==3
+            
+
+        }
+}    
+    </script>
+</body>
+</html>
